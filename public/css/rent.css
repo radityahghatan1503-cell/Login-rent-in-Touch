@@ -1,0 +1,155 @@
+/* Rent In-Touch — gaya bersama (login, daftar, dashboard) */
+:root {
+  --green-900: #164a3d;
+  --green-800: #1d5a4a;
+  --green-100: #dbe5df;
+  --orange: #e8a23b;
+  --orange-dark: #cf8a22;
+  --bg: #f3f5f2;
+  --card: #ffffff;
+  --ink: #1d2b27;
+  --muted: #5d6b66;
+  --line: #d9dfdb;
+  --danger: #b3261e;
+  --danger-bg: #fbe9e7;
+  --ok-bg: #e3f1e8;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.5;
+}
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+
+/* ---------- Logo ---------- */
+.brand { display: flex; align-items: center; gap: 14px; text-decoration: none; color: #fff; }
+.brand-mark {
+  width: 46px; height: 46px; border-radius: 12px; background: var(--orange);
+  display: grid; place-items: center; flex: none;
+}
+.brand-name { font-size: 1.5rem; font-weight: 700; line-height: 1.1; letter-spacing: -.01em; }
+.brand-sub { font-size: .8rem; opacity: .85; }
+
+/* ---------- Halaman auth: dua panel ---------- */
+.auth { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); }
+
+.auth-side {
+  background: var(--green-900);
+  color: #fff;
+  padding: 36px clamp(28px, 4vw, 64px);
+  display: flex; flex-direction: column; justify-content: space-between; gap: 32px;
+}
+.auth-side h1 { font-size: clamp(1.8rem, 2.6vw, 2.5rem); line-height: 1.15; margin: 0 0 12px; letter-spacing: -.02em; }
+.auth-side p { margin: 0; opacity: .88; max-width: 38ch; }
+
+.car-tile {
+  position: relative; background: var(--green-100); border-radius: 18px;
+  padding: 56px 24px 20px; max-width: 460px;
+}
+.car-tile svg { width: 100%; max-width: 300px; height: auto; margin: 0 auto; display: block; }
+.chip {
+  position: absolute; top: 16px; left: 16px; background: #fff; color: var(--ink);
+  font-weight: 600; font-size: .85rem; padding: 6px 14px; border-radius: 999px;
+}
+.perks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: .95rem; }
+.perks li { display: flex; gap: 10px; align-items: center; }
+.perks li::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--orange); flex: none;
+}
+
+.auth-main { display: grid; place-items: center; padding: 32px 20px; }
+.auth-card { width: 100%; max-width: 460px; }
+.auth-card h2 { font-size: 1.75rem; margin: 0 0 4px; letter-spacing: -.02em; }
+.auth-card .lead { margin: 0 0 22px; color: var(--muted); }
+
+/* ---------- Pill peran (radio) ---------- */
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 22px; min-width: 0; border: 0; padding: 0; }
+.pills legend { font-size: .8rem; color: var(--muted); margin-bottom: 8px; padding: 0; }
+.pill input { position: absolute; opacity: 0; pointer-events: none; }
+.pill span {
+  display: inline-block; padding: 9px 20px; border-radius: 999px; border: 1px solid var(--line);
+  background: #fff; font-weight: 600; cursor: pointer; transition: background .15s, border-color .15s;
+}
+.pill span:hover { border-color: var(--green-800); }
+.pill input:checked + span { background: var(--orange); border-color: var(--orange); color: #2a1d06; }
+.pill input:focus-visible + span { outline: 3px solid var(--green-900); outline-offset: 2px; }
+
+/* ---------- Form ---------- */
+.field { margin-bottom: 16px; }
+.field label, .label {
+  display: block; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 6px;
+}
+.control { position: relative; }
+.field input[type=text], .field input[type=email], .field input[type=password], .field input[type=tel] {
+  width: 100%; padding: 13px 14px; font: inherit; color: var(--ink); background: #fff;
+  border: 1px solid var(--line); border-radius: 10px; transition: border-color .15s, box-shadow .15s;
+}
+.field input:focus { outline: none; border-color: var(--green-800); box-shadow: 0 0 0 3px rgba(29,90,74,.18); }
+.field.has-error input { border-color: var(--danger); }
+.control .toggle {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  background: none; border: 0; padding: 8px 10px; font: inherit; font-size: .85rem;
+  font-weight: 600; color: var(--green-800); border-radius: 8px;
+}
+.control .toggle:hover { background: var(--green-100); }
+.control input[type=password], .control input.has-toggle { padding-right: 76px; }
+.error-text { color: var(--danger); font-size: .85rem; margin-top: 6px; }
+.hint { color: var(--muted); font-size: .82rem; margin-top: 6px; }
+
+.row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 4px 0 20px; flex-wrap: wrap; }
+.check { display: flex; align-items: center; gap: 8px; font-size: .92rem; }
+.check input { width: 18px; height: 18px; accent-color: var(--green-900); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.btn {
+  display: inline-block; width: 100%; padding: 14px 18px; border: 0; border-radius: 10px;
+  background: var(--orange); color: #2a1d06; font: inherit; font-weight: 700; cursor: pointer;
+  text-align: center; text-decoration: none; transition: background .15s;
+}
+.btn:hover { background: var(--orange-dark); }
+.btn-ghost { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.45); width: auto; padding: 9px 18px; }
+.btn-ghost:hover { background: rgba(255,255,255,.12); }
+
+.switch { margin-top: 22px; text-align: center; color: var(--muted); }
+.switch a { color: var(--green-800); font-weight: 700; }
+
+.alert { padding: 12px 14px; border-radius: 10px; margin-bottom: 18px; font-size: .92rem; }
+.alert-error { background: var(--danger-bg); color: var(--danger); }
+.alert-ok { background: var(--ok-bg); color: var(--green-900); }
+
+.demo-box {
+  margin-top: 26px; padding: 14px 16px; border: 1px dashed var(--line); border-radius: 10px;
+  font-size: .85rem; color: var(--muted);
+}
+.demo-box code { background: var(--green-100); padding: 1px 6px; border-radius: 5px; color: var(--ink); }
+
+/* ---------- Shell aplikasi (setelah login) ---------- */
+.topbar {
+  background: var(--green-900); color: #fff; padding: 14px clamp(16px, 3vw, 40px);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.topbar .who { display: flex; align-items: center; gap: 14px; font-size: .95rem; }
+.badge { background: var(--orange); color: #2a1d06; font-weight: 700; padding: 4px 14px; border-radius: 999px; font-size: .85rem; }
+.page { max-width: 1000px; margin: 0 auto; padding: 36px 20px; }
+.page h1 { font-size: 2rem; margin: 0 0 6px; letter-spacing: -.02em; }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; margin-top: 22px; }
+.panel a.link { color: var(--green-800); font-weight: 700; }
+
+/* ---------- Responsif ---------- */
+@media (max-width: 860px) {
+  .auth { grid-template-columns: 1fr; }
+  .auth-side { padding: 22px 20px; gap: 18px; }
+  .auth-side .car-tile, .auth-side .perks { display: none; }
+  .auth-side h1 { font-size: 1.5rem; margin-bottom: 6px; }
+  .auth-main { align-items: start; padding-top: 24px; }
+}
+@media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
