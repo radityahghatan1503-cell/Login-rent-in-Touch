@@ -11,6 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Tabel sudah dibuat dari SQL ERD (db_rent_int_touch.sql); lewati jika sudah ada.
+        if (Schema::hasTable('tb_tenant')) {
+            return;
+        }
+
           Schema::create('tb_tenant', function (Blueprint $table) {
         $table->id('id_tenant');
         $table->string('nama_rental');

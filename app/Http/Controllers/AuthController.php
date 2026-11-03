@@ -27,24 +27,26 @@ class AuthController extends Controller
             'password.required' => 'Kata sandi wajib diisi.',
         ]);
 
-        $attempt = $request->only('email', 'password');
+        // is_active = 1: akun yang dinonaktifkan tidak bisa masuk.
+        $attempt = $request->only('email', 'password') + ['is_active' => 1];
 
         if (! Auth::attempt($attempt, $request->boolean('remember'))) {
             return back()
                 ->withInput($request->only('email', 'role', 'remember'))
-                ->withErrors(['email' => 'Email atau kata sandi salah. Periksa lagi lalu coba masuk.']);
+                ->withErrors(['email' => 'Email atau kata sandi salah, atau akun tidak aktif.']);
         }
 
-        // Akun benar, tapi pastikan tab peran yang dipilih sesuai dengan peran akun.
-        if (Auth::user()->role !== $credentials['role']) {
-            $peranAkun = Auth::user()->roleLabel();
+        // Akun benar, tapi pastikan tab yang dipilih sesuai dengan grup akun.
+        $grup = Auth::user()->grup();
+        if ($grup !== $credentials['role']) {
+            $label = Auth::user()->grupLabel();
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
             return back()
                 ->withInput($request->only('email', 'role', 'remember'))
-                ->withErrors(['role' => "Akun ini terdaftar sebagai {$peranAkun}. Pilih tab {$peranAkun} untuk masuk."]);
+                ->withErrors(['role' => "Akun ini terdaftar sebagai {$label}. Pilih tab {$label} untuk masuk."]);
         }
 
         $request->session()->regenerate();
@@ -57,21 +59,22 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
+    /**
+     * Pendaftaran publik hanya untuk pelanggan.
+     * Akun global (id_tenant NULL); data tb_pelanggan dibuat saat pertama kali memesan.
+     * Akun mitra/staff/admin dibuat oleh admin.
+     */
     public function register(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'telepon' => ['nullable', 'regex:/^[0-9+\-\s]{8,20}$/'],
-            // Admin tidak bisa mendaftar sendiri; dibuat lewat seeder/admin.
-            'role' => ['required', 'in:pelanggan,mitra'],
+            'name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'email', 'max:100', 'unique:tb_users,email'],
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
         ], [
             'name.required' => 'Nama lengkap wajib diisi.',
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email belum benar.',
             'email.unique' => 'Email ini sudah terdaftar. Silakan masuk.',
-            'telepon.regex' => 'Nomor telepon hanya boleh angka, spasi, + atau -, minimal 8 digit.',
             'password.required' => 'Kata sandi wajib diisi.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak sama.',
             'password.min' => 'Kata sandi minimal 8 karakter.',
@@ -80,7 +83,14 @@ class AuthController extends Controller
         ]);
 
         // Password di-hash otomatis oleh cast 'hashed' di model User.
-        $user = User::create($data);
+        $user = User::create([
+            'id_tenant' => null,
+            'nama' => $data['name'],
+            'email' => $data['email'],
+            'password' => $data['password'],
+            'role' => User::ROLE_PELANGGAN,
+            'is_active' => true,
+        ]);
 
         Auth::login($user);
         $request->session()->regenerate();

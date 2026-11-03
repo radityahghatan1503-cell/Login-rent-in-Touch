@@ -1,25 +1,21 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
+/**
+ * Tidak dipakai lagi. Login sekarang memakai tabel tb_users dari ERD
+ * (kolom role sudah ada di sana). File ini dibiarkan kosong agar riwayat
+ * migrasi tidak rusak.
+ */
 return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['pelanggan', 'mitra', 'admin'])
-                ->default('pelanggan')
-                ->after('password');
-            $table->string('telepon', 20)->nullable()->after('email');
-        });
+        //
     }
 
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['role', 'telepon']);
-        });
+        //
     }
 };

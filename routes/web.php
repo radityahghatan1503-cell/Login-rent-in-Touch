@@ -1,6 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BerandaController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\MobilController;
+use App\Http\Controllers\PemesananMitraController;
+use App\Http\Controllers\PesananController;
+use App\Http\Controllers\SupirController;
+use App\Http\Controllers\TenantAkunController;
 use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,15 +43,34 @@ Route::post('/logout', [AuthController::class, 'logout'])
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
-    Route::view('/dashboard', 'dashboard')->name('dashboard');
+    // Pelanggan diarahkan ke beranda; mitra & admin ke dashboard masing-masing
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Manajemen tenant hanya untuk admin
+    // ---- Pelanggan
+    Route::middleware('role:pelanggan')->group(function () {
+        Route::get('/beranda', [BerandaController::class, 'index'])->name('beranda');
+        Route::get('/mobil/{id}', [BerandaController::class, 'show'])->whereNumber('id')->name('mobil.detail');
+
+        Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
+        Route::get('/pesanan/{kode}', [PesananController::class, 'show'])->name('pesanan.show');
+        Route::patch('/pesanan/{kode}/batal', [PesananController::class, 'batal'])->name('pesanan.batal');
+    });
+
+    // ---- Mitra (admin_rental & staff)
+    Route::middleware('role:mitra')->prefix('mitra')->name('mitra.')->group(function () {
+        Route::resource('mobil', MobilController::class)->except('show');
+        Route::resource('kategori', KategoriController::class)->except('show');
+        Route::resource('supir', SupirController::class)->except('show');
+
+        Route::get('pemesanan', [PemesananMitraController::class, 'index'])->name('pemesanan.index');
+        Route::get('pemesanan/{id}', [PemesananMitraController::class, 'show'])->whereNumber('id')->name('pemesanan.show');
+        Route::patch('pemesanan/{id}/status', [PemesananMitraController::class, 'status'])->whereNumber('id')->name('pemesanan.status');
+    });
+
+    // ---- Super admin
     Route::middleware('role:admin')->group(function () {
-        Route::get('/tenant', [TenantController::class, 'index'])->name('tenant.index');
-        Route::get('/tenant/create', [TenantController::class, 'create'])->name('tenant.create');
-        Route::post('/tenant', [TenantController::class, 'store'])->name('tenant.store');
-        Route::get('/tenant/{id_tenant}/edit', [TenantController::class, 'edit'])->name('tenant.edit');
-        Route::put('/tenant/{id_tenant}', [TenantController::class, 'update'])->name('tenant.update');
-        Route::delete('/tenant/{id_tenant}', [TenantController::class, 'destroy'])->name('tenant.destroy');
+        Route::resource('tenant', TenantController::class);
+        Route::post('tenant/{tenant}/akun', [TenantAkunController::class, 'store'])->name('tenant.akun.store');
+        Route::patch('tenant/{tenant}/akun/{user}', [TenantAkunController::class, 'toggle'])->name('tenant.akun.toggle');
     });
 });

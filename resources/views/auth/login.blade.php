@@ -59,8 +59,10 @@
 
     @if (app()->environment('local'))
         <div class="demo-box">
-            Akun demo (setelah <code>php artisan db:seed</code>), kata sandi <code>password123</code>:<br>
-            <code>pelanggan@rentintouch.test</code> · <code>mitra@rentintouch.test</code> · <code>admin@rentintouch.test</code>
+            Akun demo (setelah <code>php artisan db:seed</code>):<br>
+            Pelanggan: <code>andi@example.com</code> / <code>andi123</code><br>
+            Mitra: <code>admin1@example.com</code> / <code>adminmaju</code>, atau <code>staff1@example.com</code> / <code>staffmaju</code><br>
+            Admin: <code>superadmin@example.com</code> / <code>superadmin123</code>
         </div>
     @endif
 @endsection

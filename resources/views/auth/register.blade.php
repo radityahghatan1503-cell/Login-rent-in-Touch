@@ -2,26 +2,14 @@
 
 @section('title', 'Daftar')
 @section('side_title', 'Gabung dan mulai bandingkan mobil')
-@section('side_text', 'Daftar sebagai pelanggan untuk menyewa, atau sebagai mitra untuk menawarkan unit rentalmu.')
+@section('side_text', 'Buat akun pelanggan untuk menyewa mobil dari berbagai mitra. Data KTP dan SIM baru diminta saat kamu memesan.')
 
 @section('content')
-    <h2>Buat akun baru</h2>
-    <p class="lead">Gratis, hanya butuh satu menit.</p>
+    <h2>Buat akun pelanggan</h2>
+    <p class="lead">Gratis, hanya butuh satu menit. Ingin jadi mitra rental? Hubungi admin Rent In-Touch.</p>
 
     <form method="POST" action="{{ route('register.store') }}" novalidate>
         @csrf
-
-        @php $peran = old('role', 'pelanggan'); @endphp
-        <fieldset class="pills">
-            <legend>Daftar sebagai</legend>
-            @foreach (['pelanggan' => 'Pelanggan', 'mitra' => 'Mitra'] as $nilai => $label)
-                <label class="pill">
-                    <input type="radio" name="role" value="{{ $nilai }}" @checked($peran === $nilai)>
-                    <span>{{ $label }}</span>
-                </label>
-            @endforeach
-        </fieldset>
-        @error('role') <div class="alert alert-error" role="alert">{{ $message }}</div> @enderror
 
         <div class="field @error('name') has-error @enderror">
             <label for="name">Nama lengkap</label>
@@ -29,17 +17,10 @@
             @error('name') <div class="error-text">{{ $message }}</div> @enderror
         </div>
 
-        <div class="grid-2">
-            <div class="field @error('email') has-error @enderror">
-                <label for="email">Email</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" autocomplete="email" placeholder="nama@email.com" required>
-                @error('email') <div class="error-text">{{ $message }}</div> @enderror
-            </div>
-            <div class="field @error('telepon') has-error @enderror">
-                <label for="telepon">Telepon (opsional)</label>
-                <input id="telepon" type="tel" name="telepon" value="{{ old('telepon') }}" autocomplete="tel" placeholder="08xxxxxxxxxx">
-                @error('telepon') <div class="error-text">{{ $message }}</div> @enderror
-            </div>
+        <div class="field @error('email') has-error @enderror">
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}" autocomplete="email" placeholder="nama@email.com" required>
+            @error('email') <div class="error-text">{{ $message }}</div> @enderror
         </div>
 
         <div class="field @error('password') has-error @enderror">
