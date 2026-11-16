@@ -8,6 +8,7 @@ use App\Models\Pemesanan;
 use App\Models\Supir;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 /** Pemesanan masuk untuk mitra: daftar, detail, dan perubahan status. */
 class PemesananMitraController extends Controller
@@ -66,14 +67,20 @@ class PemesananMitraController extends Controller
         $baru = $request->input('status');
         $lama = $p->status;
 
-        if (! in_array($baru, self::ALUR[$lama] ?? [], true)) {
-            return back()->with('error', 'Perubahan status tidak diizinkan dari "' . $lama . '".');
-        }
+        $request->validate([
+            'status' => ['required', 'string', Rule::in(self::ALUR[$lama] ?? [])],
+            'alasan_penolakan' => [$baru === 'dibatalkan' ? 'required' : 'nullable', 'string', 'max:2000'],
+        ], [
+            'alasan_penolakan.required' => 'Alasan penolakan/pembatalan wajib diisi.',
+        ]);
 
-        DB::transaction(function () use ($p, $baru, $lama) {
+        DB::transaction(function () use ($p, $baru, $lama, $request) {
             $p->status = $baru;
             if ($baru === 'dikonfirmasi') {
                 $p->id_staff = auth()->id();
+            }
+            if ($baru === 'dibatalkan') {
+                $p->alasan_penolakan = $request->input('alasan_penolakan');
             }
             $p->save();
 
