@@ -8,6 +8,7 @@ use App\Models\Pemesanan;
 use App\Models\Supir;
 use App\Notifications\BookingReceived;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -200,7 +201,15 @@ class BookingController extends Controller
             ->get();
 
         if ($penerima->isNotEmpty()) {
-            Notification::send($penerima, new BookingReceived($pemesanan));
+            try {
+                Notification::send($penerima, new BookingReceived($pemesanan));
+            } catch (Throwable $e) {
+                // Jangan menggagalkan booking yang sudah tersimpan jika kanal notifikasi bermasalah.
+                Log::error('Gagal mengirim notifikasi booking kepada mitra.', [
+                    'booking_id' => $pemesanan->id_pemesanan,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         return redirect()
