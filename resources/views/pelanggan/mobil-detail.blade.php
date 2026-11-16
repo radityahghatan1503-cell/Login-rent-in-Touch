@@ -88,8 +88,76 @@
                 @endif
                 <div class="sum-row total"><span>Total sewa mobil</span><span>{{ $F::rupiah($total) }}</span></div>
 
-                <button type="button" class="btn" style="margin-top:14px" disabled>Pesan mobil (segera hadir)</button>
-                <p class="hint">Pemesanan lengkap dengan verifikasi data diri dibuka di tahap berikutnya.</p>
+                @if ($bentrok)
+                    <button type="button" class="btn" style="margin-top:14px" disabled>Mobil tidak tersedia</button>
+                @else
+                    <form method="POST" action="{{ route('booking.store', $mobil->id_mobil) }}" enctype="multipart/form-data" class="booking-form" style="margin-top:16px">
+                        @csrf
+                        <h2>Ajukan pemesanan</h2>
+                        <input type="hidden" name="tanggal_mulai" value="{{ $mulai }}">
+                        <input type="hidden" name="tanggal_selesai" value="{{ $selesai }}">
+
+                        <div class="field">
+                            <label for="booking_nama">Nama lengkap sesuai identitas</label>
+                            <input id="booking_nama" name="nama_lengkap" value="{{ old('nama_lengkap', auth()->user()->nama) }}" maxlength="100" required>
+                            @error('nama_lengkap')<small class="error">{{ $message }}</small>@enderror
+                        </div>
+                        <div class="field">
+                            <label for="booking_nik">NIK (16 digit)</label>
+                            <input id="booking_nik" name="nik" value="{{ old('nik') }}" inputmode="numeric" maxlength="16" minlength="16" required>
+                            @error('nik')<small class="error">{{ $message }}</small>@enderror
+                        </div>
+                        <div class="field">
+                            <label for="booking_telepon">Nomor telepon</label>
+                            <input id="booking_telepon" name="telepon" value="{{ old('telepon') }}" maxlength="20" required>
+                            @error('telepon')<small class="error">{{ $message }}</small>@enderror
+                        </div>
+                        <div class="field">
+                            <label for="booking_alamat">Alamat</label>
+                            <textarea id="booking_alamat" name="alamat" rows="2">{{ old('alamat') }}</textarea>
+                            @error('alamat')<small class="error">{{ $message }}</small>@enderror
+                        </div>
+                        <div class="field">
+                            <label for="booking_sim">Nomor SIM</label>
+                            <input id="booking_sim" name="no_sim" value="{{ old('no_sim') }}" maxlength="30" required>
+                            @error('no_sim')<small class="error">{{ $message }}</small>@enderror
+                        </div>
+                        <div class="field">
+                            <label for="booking_ktp">Unggah KTP (JPG/PNG/PDF, maks. 5 MB)</label>
+                            <input id="booking_ktp" type="file" name="foto_ktp" accept=".jpg,.jpeg,.png,.pdf" required>
+                            @error('foto_ktp')<small class="error">{{ $message }}</small>@enderror
+                        </div>
+                        <div class="field">
+                            <label for="booking_foto_sim">Unggah SIM (JPG/PNG/PDF, maks. 5 MB)</label>
+                            <input id="booking_foto_sim" type="file" name="foto_sim" accept=".jpg,.jpeg,.png,.pdf" required>
+                            @error('foto_sim')<small class="error">{{ $message }}</small>@enderror
+                        </div>
+                        <div class="field">
+                            <label for="booking_supir">Pilihan layanan</label>
+                            <select id="booking_supir" name="id_supir">
+                                <option value="">Lepas kunci</option>
+                                @foreach ($supir as $s)
+                                    <option value="{{ $s->id_supir }}" @selected(old('id_supir') == $s->id_supir)>
+                                        Dengan sopir — {{ $s->nama_supir }} ({{ $F::rupiah($s->tarif_per_hari) }}/hari)
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('id_supir')<small class="error">{{ $message }}</small>@enderror
+                        </div>
+                        <div class="field">
+                            <label for="booking_jemput">Lokasi penjemputan</label>
+                            <input id="booking_jemput" name="lokasi_jemput" value="{{ old('lokasi_jemput') }}" maxlength="255">
+                            @error('lokasi_jemput')<small class="error">{{ $message }}</small>@enderror
+                        </div>
+                        <div class="field">
+                            <label for="booking_kembali">Lokasi pengembalian</label>
+                            <input id="booking_kembali" name="lokasi_kembali" value="{{ old('lokasi_kembali') }}" maxlength="255">
+                            @error('lokasi_kembali')<small class="error">{{ $message }}</small>@enderror
+                        </div>
+                        <p class="hint">Dokumen identitas disimpan secara privat. Pengajuan akan berstatus menunggu konfirmasi mitra. Pembayaran dilakukan pada tahap berikutnya.</p>
+                        <button type="submit" class="btn" style="width:100%">Kirim pengajuan booking</button>
+                    </form>
+                @endif
             </div>
         </aside>
     </div>
