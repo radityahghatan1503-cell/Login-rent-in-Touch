@@ -3,7 +3,7 @@
 @section('title', 'Pesanan ' . $p->kode_pemesanan)
 
 @php
-    $label = ['dikonfirmasi' => 'Konfirmasi pesanan', 'berjalan' => 'Mulai sewa (serah terima unit)', 'selesai' => 'Selesaikan sewa', 'dibatalkan' => 'Batalkan pesanan'];
+    $label = ['dikonfirmasi' => 'Terima pesanan', 'berjalan' => 'Mulai sewa (serah terima unit)', 'selesai' => 'Selesaikan sewa', 'dibatalkan' => $p->status === 'menunggu' ? 'Tolak pengajuan' : 'Batalkan pesanan'];
 @endphp
 
 @section('content')
