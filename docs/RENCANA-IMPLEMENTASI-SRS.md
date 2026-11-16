@@ -29,23 +29,39 @@ Dokumen ini menjadi rencana kerja untuk menyesuaikan aplikasi dengan SRS **Siste
 | NFR keamanan dan multi-tenant | Role middleware dan beberapa filter tenant tersedia; konsistensi semua jalur perlu diaudit | Audit otorisasi setiap endpoint, validasi kepemilikan relasi lintas tenant, proteksi upload dokumen, CSRF, rate limiting, dan HTTPS saat deployment |
 | NFR performa/kompatibilitas | Belum ada bukti load test/monitoring lintas browser | Tambah indeks yang relevan secara aditif dan susun pengujian performa, responsif, browser, serta sinkronisasi ketersediaan |
 
-## Urutan pelaksanaan
+## Urutan pelaksanaan (disesuaikan dengan keputusan pemilik proyek)
 
-### Tahap 1 — Fondasi data dan keamanan
+**Prioritas pertama adalah menyelesaikan proses booking. Pembayaran dan integrasi Midtrans ditunda sampai alur booking selesai dan diuji.**
+
+### Tahap 1 — Booking pelanggan sampai keputusan mitra (sedang dikerjakan)
+- Form pengajuan booking dari halaman detail mobil.
+- Validasi tanggal, data pelanggan, unggahan KTP/SIM ke penyimpanan privat.
+- Pemeriksaan ketersediaan mobil dan sopir di dalam transaksi database dengan row locking.
+- Pembuatan kode booking dan perhitungan biaya sewa serta sopir.
+- Notifikasi database kepada admin rental/staf tenant terkait.
+- Halaman mitra untuk menerima/menolak pengajuan; alasan penolakan wajib diisi.
+- Halaman status pelanggan dan pembatalan sebelum mitra mengonfirmasi.
+- Akses dokumen identitas dibatasi pada tenant pemilik booking.
+
+### Tahap 2 — Penyelesaian alur operasional dan keamanan
+- Uji seluruh alur booking pelanggan, notifikasi, keputusan mitra, pembatalan, dan isolasi tenant.
+- Lengkapi kalender ketersediaan, layanan tambahan, ulasan, dan checklist/foto serah-terima serta pengembalian.
 - Audit relasi tenant dan seluruh jalur akses data.
-- Tambahkan migration aditif untuk dokumen mitra, kalender/blokir ketersediaan, layanan tambahan, ulasan, keluhan, audit log, komisi, invoice, escrow/ledger, payout, dan checklist serah-terima.
-- Tambahkan alasan penolakan dan snapshot biaya/layanan booking tanpa menghapus kolom lama.
-- Pastikan migration dapat dijalankan pada database baru maupun database yang sudah berisi tabel dari dump SQL.
+- Pastikan migration aditif dapat dijalankan pada database baru maupun database yang sudah berisi tabel dari dump SQL.
 
-### Tahap 2 — Alur mitra dan pelanggan
-- Registrasi/verifikasi mitra.
-- Kalender ketersediaan dan pencegahan double booking dengan transaksi database/locking.
-- Katalog layanan tambahan.
-- Form booking pelanggan dengan unggah KTP/SIM secara privat.
-- Notifikasi, keputusan mitra, alasan penolakan, pembatalan, status, dan ulasan.
-- Checklist dan foto saat serah-terima serta pengembalian.
+### Tahap 3 — Modul mitra dan back office
+- Registrasi/verifikasi mitra dan dokumen legalitas.
+- Dashboard pendapatan, booking aktif, dan riwayat transaksi.
+- Komisi platform, laporan, keluhan/dispute, dan audit log.
 
-### Tahap 3 — Pembayaran dan transaksi
+### Tahap 4 — Pembayaran dan transaksi (ditunda sampai booking selesai)
+- Integrasi Midtrans sandbox/production setelah akun dan kredensial tersedia.
+- Invoice, deposit, escrow/ledger, refund, dan payout sesuai kemampuan API provider.
+
+### Tahap 5 — Pengujian non-fungsional dan penerimaan
+- Uji kriteria SRS: pencarian <2 detik pada beban uji yang disepakati, sinkronisasi ketersediaan <=5 detik, dan pengujian kompatibilitas browser/responsif.
+
+### Rencana pembayaran setelah tahap booking selesai
 - Gunakan Midtrans Snap sebagai kandidat integrasi awal karena dokumentasi resminya menyediakan alur pembuatan transaksi dari backend dan notifikasi status pembayaran.
 - Implementasi hanya dapat diaktifkan setelah tersedia Server Key, Client Key, akun sandbox, dan URL publik HTTPS untuk webhook. Kunci tidak boleh dikirim melalui chat atau commit Git; masukkan langsung ke file `.env` lokal/server.
 - Status lunas hanya diperbarui dari webhook yang signature-nya valid dan status transaksi gateway yang memenuhi ketentuan provider; redirect browser tidak menjadi bukti pembayaran.
