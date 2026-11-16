@@ -27,6 +27,7 @@ class Pemesanan extends Model
         'lama_sewa_hari',
         'total_biaya',
         'status',
+        'alasan_penolakan',
     ];
 
     protected $casts = [
