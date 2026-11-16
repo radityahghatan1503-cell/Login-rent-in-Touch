@@ -10,6 +10,9 @@
     <h2>Status pesanan</h2>
     @if ($p->status === 'dibatalkan')
         <p style="margin:0"><x-status s="dibatalkan" /> Pesanan ini dibatalkan.</p>
+        @if ($p->alasan_penolakan)
+            <p style="margin-top:10px"><strong>Alasan:</strong> {{ $p->alasan_penolakan }}</p>
+        @endif
     @else
         <ol class="steps">
             @foreach ($urut as $i => $s)
@@ -100,6 +103,12 @@
                     <dt>Telepon</dt><dd>{{ $p->pelanggan->telepon }}</dd>
                     <dt>No. SIM</dt><dd>{{ $p->pelanggan->no_sim ?: '-' }}</dd>
                     <dt>Alamat</dt><dd>{{ $p->pelanggan->alamat ?: '-' }}</dd>
+                    <dt>Dokumen identitas</dt>
+                    <dd>
+                        <a href="{{ route('mitra.pemesanan.dokumen', [$p->id_pemesanan, 'ktp']) }}" target="_blank" rel="noopener">Lihat KTP</a>
+                        ·
+                        <a href="{{ route('mitra.pemesanan.dokumen', [$p->id_pemesanan, 'sim']) }}" target="_blank" rel="noopener">Lihat SIM</a>
+                    </dd>
                     @if ($p->staff)
                         <dt>Diproses oleh</dt><dd>{{ $p->staff->nama }}</dd>
                     @endif
