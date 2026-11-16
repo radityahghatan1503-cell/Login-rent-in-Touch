@@ -26,6 +26,11 @@
                           @if ($next === 'dibatalkan') onsubmit="return confirm('Batalkan pesanan ini?')" @endif>
                         @csrf @method('PATCH')
                         <input type="hidden" name="status" value="{{ $next }}">
+                        @if ($next === 'dibatalkan')
+                            <label for="alasan_penolakan">Alasan penolakan/pembatalan</label>
+                            <textarea id="alasan_penolakan" name="alasan_penolakan" rows="2" maxlength="2000" required>{{ old('alasan_penolakan') }}</textarea>
+                            @error('alasan_penolakan')<small class="error">{{ $message }}</small>@enderror
+                        @endif
                         <button type="submit" class="btn btn-sm {{ $next === 'dibatalkan' ? 'btn-danger' : 'btn-green' }}">{{ $label[$next] }}</button>
                     </form>
                 @endforeach
