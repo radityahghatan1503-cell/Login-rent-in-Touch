@@ -6,6 +6,8 @@ use App\Models\Mobil;
 use App\Models\Pelanggan;
 use App\Models\Pemesanan;
 use App\Models\Supir;
+use App\Notifications\BookingReceived;
+use Illuminate\Support\Facades\Notification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -190,6 +192,15 @@ class BookingController extends Controller
                 Storage::disk('local')->delete($path);
             }
             throw $e;
+        }
+
+        $penerima = $pemesanan->tenant->users()
+            ->whereIn('role', ['admin_rental', 'staff'])
+            ->where('is_active', true)
+            ->get();
+
+        if ($penerima->isNotEmpty()) {
+            Notification::send($penerima, new BookingReceived($pemesanan));
         }
 
         return redirect()
