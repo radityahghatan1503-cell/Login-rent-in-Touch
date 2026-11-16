@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BerandaController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MobilController;
@@ -49,7 +50,8 @@ Route::middleware('auth')->group(function () {
     // ---- Pelanggan
     Route::middleware('role:pelanggan')->group(function () {
         Route::get('/beranda', [BerandaController::class, 'index'])->name('beranda');
-        Route::get('/mobil/{id}', [BerandaController::class, 'show'])->whereNumber('id')->name('mobil.detail');\n        Route::post('/mobil/{id}/booking', [BookingController::class, 'store'])->whereNumber('id')->middleware('throttle:5,1')->name('booking.store');
+        Route::get('/mobil/{id}', [BerandaController::class, 'show'])->whereNumber('id')->name('mobil.detail');
+        Route::post('/mobil/{id}/booking', [BookingController::class, 'store'])->whereNumber('id')->middleware('throttle:5,1')->name('booking.store');\n        Route::post('/mobil/{id}/booking', [BookingController::class, 'store'])->whereNumber('id')->middleware('throttle:5,1')->name('booking.store');
 
         Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
         Route::get('/pesanan/{kode}', [PesananController::class, 'show'])->name('pesanan.show');
