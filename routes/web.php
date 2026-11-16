@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BerandaController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DokumenPelangganController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MobilController;
 use App\Http\Controllers\PemesananMitraController;
@@ -66,6 +67,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('pemesanan', [PemesananMitraController::class, 'index'])->name('pemesanan.index');
         Route::get('pemesanan/{id}', [PemesananMitraController::class, 'show'])->whereNumber('id')->name('pemesanan.show');
+        Route::get('pemesanan/{id}/dokumen/{jenis}', [DokumenPelangganController::class, 'show'])->whereNumber('id')->name('pemesanan.dokumen');
         Route::patch('pemesanan/{id}/status', [PemesananMitraController::class, 'status'])->whereNumber('id')->name('pemesanan.status');
     });
 
